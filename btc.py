@@ -1,7 +1,6 @@
 import ccxt # https://docs.ccxt.com
 from logging import getLogger
 import pandas
-import plotly.express as px
 from pathlib import Path
 from datetime import datetime
 
@@ -90,7 +89,6 @@ def read_USD2BTC_data_downloaded_from_coincodex()->pandas.DataFrame:
 		Path(__file__).parent/'data/USD2BTC.csv',
 		comment = '#',
 	)
-	print(data.columns)
 	for col in {'Start','End'}:
 		data[col] = pandas.to_datetime(data[col])
 	data['datetime'] = data['End']
@@ -108,15 +106,19 @@ def get_data()->pandas.DataFrame:
 	chf2usd = read_CHF2USD_downloaded_from_forexsb()
 	usd2btc = read_USD2BTC_data_downloaded_from_coincodex()
 
-	print(chf2usd)
-	print(usd2btc)
-
 	data_calculated = pandas.DataFrame(index=usd2btc.index)
 	for col in ['open','high','low','close']:
 		data_calculated[f'{col} (CHF/BTC)'] = usd2btc[f'{col} (USD/BTC)']*chf2usd[f'{col} (CHF/USD)']
 	data_calculated['source'] = usd2btc['source'].map(str) + '*' + chf2usd['source']
 
 	data = pandas.concat([data, data_calculated])
+
+	return data
+
+if __name__ == '__main__':
+	import plotly.express as px
+
+	data = get_data()
 
 	fig = px.line(
 		data_frame = data.sort_index().reset_index(drop=False),
@@ -125,7 +127,7 @@ def get_data()->pandas.DataFrame:
 		color = 'source',
 		log_y = True,
 	)
-	fig.write_html('deleteme.html')
+	SAVE_PLOT_HERE = Path.home()/'deleteme.html'
+	fig.write_html(SAVE_PLOT_HERE)
 
-if __name__ == '__main__':
-	data = get_data()
+	print(f'Plot has been created in {SAVE_PLOT_HERE}')
