@@ -114,7 +114,7 @@ def get_data()->pandas.DataFrame:
 
 	data = pandas.concat([data, data_calculated])
 
-	return data
+	return data.sort_index()
 
 if __name__ == '__main__':
 	import plotly.express as px
