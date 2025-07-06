@@ -42,7 +42,7 @@ def download_BTC2CHF_data(n_days:int, exchange=None)->pandas.DataFrame:
 		exchange = ccxt.kraken()
 	logger.debug(f'Downloading CHF/BTC data from {exchange}...')
 	ohlcv = exchange.fetch_ohlcv(
-		'CHF/BTC',
+		'BTC/CHF',
 		timeframe = '1d',
 		limit = n_days,
 		# ~ params = {"paginate": True, "paginationCalls": 5},
@@ -55,7 +55,7 @@ def download_BTC2CHF_data(n_days:int, exchange=None)->pandas.DataFrame:
 	df.sort_index(inplace=True)
 	return df
 
-def read_USD2CHF_downloaded_from_forexsb():
+def read_CHF2USD_downloaded_from_forexsb():
 	data = pandas.read_csv(
 		Path(__file__).parent/'data/USDCHF1440.csv',
 		comment = '#',
@@ -64,7 +64,7 @@ def read_USD2CHF_downloaded_from_forexsb():
 	data['source'] = 'forexsb'
 	data.set_index('datetime', inplace=True)
 	data.sort_index(inplace=True)
-	data.rename(columns={col: f'{col} (USD/CHF)' for col in ['open','high','low','close']}, inplace=True)
+	data.rename(columns={col: f'{col} (CHF/USD)' for col in ['open','high','low','close']}, inplace=True)
 	return data
 
 def download_BTC2CHF_data_and_update_local_database():
@@ -105,15 +105,27 @@ def get_data()->pandas.DataFrame:
 	download_BTC2CHF_data_and_update_local_database()
 	data = read_local_BTC2CHF_data()
 
-	usd2chf = read_USD2CHF_downloaded_from_forexsb()
+	chf2usd = read_CHF2USD_downloaded_from_forexsb()
 	usd2btc = read_USD2BTC_data_downloaded_from_coincodex()
+
+	print(chf2usd)
+	print(usd2btc)
 
 	data_calculated = pandas.DataFrame(index=usd2btc.index)
 	for col in ['open','high','low','close']:
-		data_calculated[f'{col} (CHF/BTC)'] = usd2btc[f'{col} (USD/BTC)']/usd2chf[f'{col} (USD/CHF)']
+		data_calculated[f'{col} (CHF/BTC)'] = usd2btc[f'{col} (USD/BTC)']*chf2usd[f'{col} (CHF/USD)']
+	data_calculated['source'] = usd2btc['source'].map(str) + '*' + chf2usd['source']
 
-	print(data_calculated)
-	print(data)
+	data = pandas.concat([data, data_calculated])
+
+	fig = px.line(
+		data_frame = data.sort_index().reset_index(drop=False),
+		x = 'datetime',
+		y = 'close (CHF/BTC)',
+		color = 'source',
+		log_y = True,
+	)
+	fig.write_html('deleteme.html')
 
 if __name__ == '__main__':
 	data = get_data()

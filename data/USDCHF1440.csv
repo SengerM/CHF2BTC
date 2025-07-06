@@ -1,5 +1,5 @@
 # Downloaded on 2025-Jul-02 from https://forexsb.com/historical-forex-data
-# Values are expressed in USD/CHF.
+# Values are expressed in CHF/USD.
 datetime,open,high,low,close,volume
 2009-06-21 00:00,1.08070,1.08180,1.07984,1.08110,10102
 2009-06-22 00:00,1.08110,1.08965,1.08110,1.08690,738778
