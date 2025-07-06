@@ -1,0 +1,11 @@
+[project]
+name = "CHF2BTC"
+version = "0"
+readme = "README.md"
+dependencies = [
+	"pandas",
+	"ccxt",
+]
+
+[project.urls]
+Homepage = "https://github.com/SengerM/CHF2BTC"

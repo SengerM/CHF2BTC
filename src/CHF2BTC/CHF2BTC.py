@@ -6,7 +6,8 @@ from datetime import datetime
 
 logger = getLogger(__name__)
 
-PATH_TO_LOCAL_BTC2CHF_FILE = Path(__file__).parent/'data/CHF2BTC.csv'
+PATH_TO_DATA_FOLDER = Path(__file__).parent.parent.parent/'data'
+PATH_TO_LOCAL_BTC2CHF_FILE = PATH_TO_DATA_FOLDER/'CHF2BTC.csv'
 
 def find_exchanges_with_pair(
 	# Find all the exchanges that have a specific pair available.
@@ -56,7 +57,7 @@ def download_BTC2CHF_data(n_days:int, exchange=None)->pandas.DataFrame:
 
 def read_CHF2USD_downloaded_from_forexsb():
 	data = pandas.read_csv(
-		Path(__file__).parent/'data/USDCHF1440.csv',
+		PATH_TO_DATA_FOLDER/'USDCHF1440.csv',
 		comment = '#',
 	)
 	data['datetime'] = pandas.to_datetime(data['datetime'])
@@ -86,7 +87,7 @@ def read_local_BTC2CHF_data()->pandas.DataFrame:
 
 def read_USD2BTC_data_downloaded_from_coincodex()->pandas.DataFrame:
 	data = pandas.read_csv(
-		Path(__file__).parent/'data/USD2BTC.csv',
+		PATH_TO_DATA_FOLDER/'USD2BTC.csv',
 		comment = '#',
 	)
 	for col in {'Start','End'}:
