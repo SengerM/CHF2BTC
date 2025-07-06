@@ -36,3 +36,5 @@ datetime
 [6187 rows x 7 columns]
 ```
 The function `get_data` will automatically try to fetch the latest data from Kraken and update the local database.
+
+![Example plot](doc/example_plot.png)
