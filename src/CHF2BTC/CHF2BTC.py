@@ -123,12 +123,13 @@ if __name__ == '__main__':
 
 	fig = px.line(
 		data_frame = data.sort_index().reset_index(drop=False),
+		title = 'Bitcoin price in Swiss Francs',
 		x = 'datetime',
 		y = 'close (CHF/BTC)',
 		color = 'source',
 		log_y = True,
 	)
 	SAVE_PLOT_HERE = Path.home()/'deleteme.html'
-	fig.write_html(SAVE_PLOT_HERE)
+	fig.write_html(SAVE_PLOT_HERE, include_plotlyjs='cdn')
 
 	print(f'Plot has been created in {SAVE_PLOT_HERE}')
